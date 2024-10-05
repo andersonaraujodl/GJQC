@@ -12,17 +12,22 @@ ASCharacter::ASCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
+	Heal(MaxHealth);
+
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
 	SpringArmComp->SetupAttachment(RootComponent);
 	 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
+
 }
 
 // Called when the game starts or when spawned
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetCurrentHealth();
 
 	if (CellphoneClass)
 	{
@@ -58,11 +63,23 @@ void ASCharacter::ToggleCamera()
 	PlayerPhone->ToggleCamera();
 }
 
+float ASCharacter::GetCurrentHealth() const
+{
+	return Health;
+}
+
+void ASCharacter::Heal(float const healingValue)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Healing: %f"), healingValue);
+
+	float NewHealth = GetCurrentHealth() + healingValue;
+	Health = FMath::Clamp(NewHealth, 0.f, MaxHealth);
+}
+
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
 }
 
 // Called to bind functionality to input
@@ -80,4 +97,3 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 	PlayerInputComponent->BindAction("ToggleCamera", IE_Pressed, this, &ASCharacter::ToggleCamera);
 
 }
-

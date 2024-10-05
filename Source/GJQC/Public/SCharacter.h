@@ -27,6 +27,9 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
+	/*UPROPERTY(VisibleAnywhere)
+	UHealthComponent* HealthComponent;*/
+
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<ASCellphone> CellphoneClass;
 	ASCellphone* PlayerPhone;
@@ -35,18 +38,23 @@ protected:
 	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
-
 	void MoveSideways(float value);
 
 	void ToggleFlashlight();
-
 	void ToggleCamera();
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	float GetCurrentHealth() const;
+
+	void Heal(float healingValue);
+
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+private:
+	float MaxHealth = 100;
+	float Health = 0;
 };
