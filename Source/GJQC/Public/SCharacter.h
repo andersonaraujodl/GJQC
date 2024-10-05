@@ -8,6 +8,7 @@
 
 class UCameraComponent;
 class USpringArmComponent;
+class ASCellphone;
 
 UCLASS()
 class GJQC_API ASCharacter : public ACharacter
@@ -26,12 +27,20 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	USpringArmComponent* SpringArmComp;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<ASCellphone> CellphoneClass;
+	ASCellphone* PlayerPhone;
+
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 	void MoveForward(float value);
 
 	void MoveSideways(float value);
+
+	void ToggleFlashlight();
+
+	void ToggleCamera();
 
 public:	
 	// Called every frame

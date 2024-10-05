@@ -4,6 +4,7 @@
 #include "SCharacter.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
+#include "SCellphone.h"
 
 // Sets default values
 ASCharacter::ASCharacter()
@@ -13,7 +14,7 @@ ASCharacter::ASCharacter()
 
 	SpringArmComp = CreateDefaultSubobject<USpringArmComponent>("SpringArmComp");
 	SpringArmComp->SetupAttachment(RootComponent);
-
+	 
 	CameraComp = CreateDefaultSubobject<UCameraComponent>("CameraComp");
 	CameraComp->SetupAttachment(SpringArmComp);
 }
@@ -22,7 +23,17 @@ ASCharacter::ASCharacter()
 void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	if (CellphoneClass)
+	{
+		PlayerPhone = GetWorld()->SpawnActor<ASCellphone>(CellphoneClass);
+
+		if (PlayerPhone)
+		{
+			//Attach Cellphone
+			PlayerPhone->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, FName("hand_r_phone_socket"));
+		}
+	}
 }
 
 
@@ -36,6 +47,16 @@ void ASCharacter::MoveSideways(float value)
 	AddMovementInput(GetActorRightVector(), value);
 }
 
+void ASCharacter::ToggleFlashlight()
+{
+	PlayerPhone->ToggleFlashlight();
+}
+
+void ASCharacter::ToggleCamera()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Toggle Camera"));
+	PlayerPhone->ToggleCamera();
+}
 
 // Called every frame
 void ASCharacter::Tick(float DeltaTime)
@@ -54,5 +75,9 @@ void ASCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponen
 
 	PlayerInputComponent->BindAxis("TurnYall", this, &APawn::AddControllerYawInput);
 	PlayerInputComponent->BindAxis("TurnPitch", this, &APawn::AddControllerPitchInput);
+
+	PlayerInputComponent->BindAction("ToggleFlashlight", IE_Pressed, this, &ASCharacter::ToggleFlashlight);
+	PlayerInputComponent->BindAction("ToggleCamera", IE_Pressed, this, &ASCharacter::ToggleCamera);
+
 }
 
